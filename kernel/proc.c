@@ -243,6 +243,9 @@ userinit(void)
   p->cwd = namei("/");
 
   p->state = RUNNABLE;
+  
+  //init trace_mask to zero
+  p->trace_mask = 0;
 
   release(&p->lock);
 }
@@ -313,6 +316,9 @@ fork(void)
 
   acquire(&np->lock);
   np->state = RUNNABLE;
+  acquire(&p->lock);
+  np->trace_mask = p->trace_mask;
+  release(&p->lock);
   release(&np->lock);
 
   return pid;
